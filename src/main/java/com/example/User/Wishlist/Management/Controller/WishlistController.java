@@ -1,5 +1,6 @@
 package com.example.User.Wishlist.Management.Controller;
 
+import com.example.User.Wishlist.Management.Entities.Wishlist;
 import com.example.User.Wishlist.Management.Services.WishlistService;
 import com.example.User.Wishlist.Management.dto.WishlistRequest;
 import com.example.User.Wishlist.Management.dto.WishlistResponse;
@@ -19,16 +20,22 @@ public class WishlistController {
     @Autowired
     private WishlistService wishlistService;
 
-    @GetMapping("user-wishlist")
-    public ResponseEntity<List<WishlistResponse>> getUserWishlist() {
-        List<WishlistResponse> responses = new ArrayList<>();
+    @GetMapping("view-wishlist")
+    public ResponseEntity<List<Wishlist>> getUserWishlist() {
+        List<Wishlist> responses = new ArrayList<>();
         responses = wishlistService.getUserWishList();
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/add-wishlist")
     public ResponseEntity<String> addWishlist(@RequestBody WishlistRequest wishlistRequest) {
         String result = wishlistService.addWishlist(wishlistRequest);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/remove-wishlist")
+    public ResponseEntity<String> removeWishlist(@RequestParam("id") Integer id) {
+        String result = wishlistService.removeWishlist(id);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 }
