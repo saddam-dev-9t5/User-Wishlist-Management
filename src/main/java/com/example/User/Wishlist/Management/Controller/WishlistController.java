@@ -20,22 +20,29 @@ public class WishlistController {
     @Autowired
     private WishlistService wishlistService;
 
+    // Retrieve a user's wishlist.
     @GetMapping("view-wishlist")
-    public ResponseEntity<List<Wishlist>> getUserWishlist() {
-        List<Wishlist> responses = new ArrayList<>();
-        responses = wishlistService.getUserWishList();
-        return new ResponseEntity<>(responses, HttpStatus.OK);
+    public ResponseEntity getUserWishlist() throws Exception {
+        try {
+            List<Wishlist> responses = wishlistService.getUserWishList();
+            return new ResponseEntity<>(responses, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
+    // Create a new wishlist item
     @PostMapping("/add-wishlist")
     public ResponseEntity<String> addWishlist(@RequestBody WishlistRequest wishlistRequest) {
         String result = wishlistService.addWishlist(wishlistRequest);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
+    // Remove a wishlist item by ID
     @DeleteMapping("/remove-wishlist")
     public ResponseEntity<String> removeWishlist(@RequestParam("id") Integer id) {
         String result = wishlistService.removeWishlist(id);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

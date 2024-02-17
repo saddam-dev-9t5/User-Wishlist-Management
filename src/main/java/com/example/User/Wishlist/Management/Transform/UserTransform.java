@@ -8,6 +8,7 @@ public class UserTransform {
         User user = User.builder()
                 .username(userRequest.getUserName())
                 .password(userRequest.getUserPassword())
+                .roles(userRequest.getRoles())
                 .build();
         return user;
     }

@@ -24,10 +24,15 @@ public class WishlistService {
     @Autowired
     private WishlistRepository wishlistRepository;
 
-    public List<Wishlist> getUserWishList() {
+    public List<Wishlist> getUserWishList() throws Exception {
         // Get login user
-        User user = getLoginUser();
-        return user.getWishlistList();
+        try {
+            User user = getLoginUser();
+            return user.getWishlistList();
+        }
+        catch (Exception e) {
+            throw new Exception("Wishlist not found");
+        }
     }
 
     public String addWishlist(WishlistRequest wishlistRequest) {
@@ -36,17 +41,16 @@ public class WishlistService {
         if(user == null) {
             return "User not found";
         }
+
         // Store wishlist to DB
         Wishlist wishlist = Wishlist.builder()
                 .name(wishlistRequest.getName())
+                .priority(wishlistRequest.getPriority())
+                .user(user)
                 .build();
         wishlist = wishlistRepository.save(wishlist);
 
-        // Add new wishlist to user's wishlist list
-        user.getWishlistList().add(wishlist);
-        userRepository.save(user);
-
-        return wishlist.getName() + " wishlist added successfully to " + user.getUsername();
+        return wishlist.getName() + " wishlist added successfully to " + wishlist.getUser().getUsername();
     }
 
     public String removeWishlist(Integer id) {
@@ -58,17 +62,16 @@ public class WishlistService {
         // Get user detail
         User user = getLoginUser();
         if(user == null) return "User not found";
-        if(user.getWishlistList().contains(wishlist)) {
-           user.getWishlistList().remove(wishlist);
-           userRepository.save(user);
-        }else {
+        if(!user.getWishlistList().contains(wishlist)) {
             return "Wishlist item belonging to other user";
         }
+        // remove wishList item from user table and delete from wishlist table
+        user.getWishlistList().remove(wishlist);
         wishlistRepository.deleteById(id);
         return "Wishlist item removed";
     }
 
-    private User getLoginUser() {
+    public User getLoginUser() {
         User user = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserInfoDetails currUser = (UserInfoDetails) authentication.getPrincipal();
