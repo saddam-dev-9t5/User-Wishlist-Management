@@ -32,11 +32,16 @@ public class UserService implements UserDetailsService {
 
 
     // Add new user to DB 'users'
-    public String addUser(UserRequest userRequest) {
-        // Data Transform from UserRequest DTO to User Entity
-        User user = UserTransform.transformUserRequestDtotoUserEntity(userRequest);
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return "User Added Successfully";
+    public String addUser(UserRequest userRequest) throws Exception {
+        try {
+            // Data Transform from UserRequest DTO to User Entity
+            User user = UserTransform.transformUserRequestDtotoUserEntity(userRequest);
+            user.setPassword(encoder.encode(user.getPassword()));
+            userRepository.save(user);
+            return "User Added Successfully";
+        }
+        catch (Exception e) {
+            throw new Exception("Please enter valid data");
+        }
     }
 }

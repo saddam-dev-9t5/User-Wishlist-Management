@@ -44,9 +44,14 @@ public class UserController {
 
     // Register new user
     @PostMapping("/add-user")
-    public ResponseEntity<String> addNewUser(@RequestBody UserRequest userRequest) {
-        String result = userService.addUser(userRequest);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    public ResponseEntity<String> addNewUser(@RequestBody UserRequest userRequest) throws Exception {
+        try {
+            String result = userService.addUser(userRequest);
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     // Access with authentication 'ROLE_USER'
